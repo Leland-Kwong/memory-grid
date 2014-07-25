@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+
+<head>
+<style>
+	*,
+	*:after,
+	*:before {
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+	}
+	html {
+		margin: 0;
+		padding: 0;
+	}
+	body {
+		font-family: sans-serif;
+		font-size: 16px;
+		line-height: 1.4;
+		margin: 0;
+		padding: 0 2em;
+	}
+	h2 {
+		margin: 0;
+	}
+	a {
+		color: inherit;
+		text-decoration: none;
+		cursor: pointer;
+	}
+	form,
+	fieldset {
+		margin: 0;
+		padding: 0;
+		border: 0;
+	}
+	input[type="text"],
+	select {
+		padding: 3px 8px;
+	}
+	input[type]:not([type="checkbox"]):not([type="radio"]) {
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+		font-size: 1em;
+	}
+	input[type="text"] {
+		width: 100%;
+	}
+	ul,
+	li {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	label {
+		display: inline-block;
+	}
+	.btn,
+	button,
+	input {
+		/* @vPadding: 4px;
+		@borderWidth: 1px;
+
+		padding: @vPadding 7px;
+		&:not([type="checkbox"]):not([type="radio"]) {
+			line-height: @baseFontSize;
+			height: @baseFontSize + (2*@vPadding) + (2*@borderWidth);
+		}
+		background: #EEE;
+		border: @borderWidth solid #D3D3D3;
+		&:focus {
+			border-color: #db4aff;
+			box-shadow: 0 0 2px #db4aff;
+			outline: none;
+		}*/
+	}
+	input[type="text"],
+	input[type="search"] {
+		background-color: #FFF;
+	}
+	.input-group {
+		display: table;
+	}
+	.input-group > * {
+		display: table-cell;
+		white-space: nowrap;
+		vertical-align: middle;
+	}
+	.input-group > *.addon {
+		width: 1%;
+	}
+	.btn-group {
+		font-size: 0;
+	}
+	.btn-group:after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+	.btn-group > * {
+		font-size: 16px;
+		display: inline-block;
+	}
+	#query-field {
+		width: 50em;
+	}
+	#query-string-wrapper input {
+		width: 100%;
+	}
+	[class*="fa-"]:before {
+		font-family: "Fontawesome";
+		font-style: normal;
+	}
+	button {
+		display: inline-block;
+		color: #FFF;
+		background: #2f5fce;
+		border: 0;
+		padding: .5em 1.25em;
+	}
+	#combo-container.update #game-score-max-combo {
+		color: #fff;
+		background: #000;
+	}
+	#game-score-max-combo {
+		padding: .2em;
+		-webkit-transition: all .2s;
+		transition: all .2s;
+	}
+	#game-content {
+		text-align: center;
+	}
+	#game-content:not(.game-started) button {
+		-webkit-box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+		box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+		-webkit-animation: floaty 1.8s ease 0s infinite;
+		animation: floaty 1.8s ease 0s infinite;
+	}
+	@-webkit-keyframes floaty {
+		0% {
+			-webkit-transform: translateY(-8px);
+			transform: translateY(-8px);
+		}
+		65% {
+			-webkit-transform: translateY(0px);
+			transform: translateY(0px);
+		}
+		100% {
+			-webkit-transform: translateY(-8px);
+			transform: translateY(-8px);
+		}
+	}
+	@keyframes floaty {
+		0% {
+			-webkit-transform: translateY(-8px);
+			transform: translateY(-8px);
+		}
+		65% {
+			-webkit-transform: translateY(0px);
+			transform: translateY(0px);
+		}
+		100% {
+			-webkit-transform: translateY(-8px);
+			transform: translateY(-8px);
+		}
+	}
+	#game-board {
+		display: inline-block;
+		margin: 10px 0 0 0;
+	}
+	#game-board:after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+	#game-board:not(.hide-solution) .correct-item {
+		background: #2f5fce;
+	}
+	#game-board.hide-solution .correct-item {
+		-webkit-transition: background: .1s;
+		transition: background: .1s;
+	}
+	#game-board:empty ~ #game-stats {
+		display: none;
+	}
+	#game-stats {
+		margin-top: 10px;
+		text-align: center;
+	}
+	#game-stats > * {
+		display: inline-block;
+		margin-left: 1em;
+	}
+	#game-timer {
+		display: inline-block;
+		vertical-align: bottom;
+		width: 8px;
+		position: relative;
+		top: -7px;
+		background: #000;
+	}
+	#game-timer.update {
+		-webkit-transition-duration: 0 !important;
+		transition-duration: 0 !important;
+	}
+	#game-timer:not(.update) {
+		height: 0 !important;
+		-webkit-transition-property: height;
+		transition-property: height;
+	}
+	.game-grid-item {
+		float: left;
+		width: 40px;
+		height: 40px;
+		margin-right: 2px;
+		margin-bottom: 2px;
+		background: #d3d3d3;
+		-webkit-transition: all .25s;
+		transition: all .25s;
+		cursor: pointer;
+	}
+	.game-grid-item:hover:not(.selected) {
+		background: #bababa;
+		-webkit-transition-duration: 0 !important;
+		transition-duration: 0 !important;
+	}
+	.game-grid-item:not(.created) {
+		opacity: 0;
+		-webkit-transform: scale(0.5, 0.5);
+		-ms-transform: scale(0.5, 0.5);
+		transform: scale(0.5, 0.5);
+	}
+	.game-grid-item.failed {
+		background: red;
+	}
+	.game-grid-row {
+		clear: both;
+	}
+	.correct-item.selected {
+		background: #2f5fce;
+	}
+	#dialog-box {
+		text-align: center;
+		padding-top: 1em;
+	}
+	.level-failed {
+		color: red;
+	}
+	#game-content:not(.game-over) .dialog-message {
+		opacity: 0;
+		-webkit-animation: showBox 1s ease 0s 1;
+		animation: showBox 1s ease 0s 1;
+	}
+	@-webkit-keyframes showBox {
+		30% {
+			-webkit-transform: translateY(3px);
+			transform: translateY(3px);
+			opacity: 1;
+		}
+		80% {
+			opacity: 1;
+			-webkit-transform: scale(1, 1);
+			transform: scale(1, 1);
+		}
+		95% {
+			opacity: 0;
+			-webkit-transform: scale(1.3, 1.3);
+			transform: scale(1.3, 1.3);
+		}
+	}
+	@keyframes showBox {
+		30% {
+			-webkit-transform: translateY(3px);
+			transform: translateY(3px);
+			opacity: 1;
+		}
+		80% {
+			opacity: 1;
+			-webkit-transform: scale(1, 1);
+			transform: scale(1, 1);
+		}
+		95% {
+			opacity: 0;
+			-webkit-transform: scale(1.3, 1.3);
+			transform: scale(1.3, 1.3);
+		}
+	}
+	#game-content:not(.game-over) .dialog-message .cheer {
+		font-size: 1.3em;
+		font-weight: bold;
+	}
+</style>
+</head>
+
+<body>
+	<div id="game-content">
+
+		<div id="intro">
+			<h1>Memory Grid</h1>
+			<button id="start-game">Start</button>
+		</div>
+
+		<div id="dialog-box">&nbsp</div>
+		<div id="game-board"></div>
+		<div id="game-timer"></div>
+		<div id="game-stats">
+			<div id="score-container">score: <span id="game-score">0</span></div>
+			<div id="combo-container">
+				<div id="max-combo">max combo: <span id="game-score-max-combo">0</span></div>
+			</div>
+		</div>
+
+	</div>
+
+<!-- html templates -->
+<script type="text/plain" id="dialog-box-template">
+	<div class="dialog-message">
+		<div class="cheer {{#failed}}level-failed{{/failed}}">
+		{{msg}}
+		</div>
+	</div>
+</script>
+
+<script type="text/plain" id="game-grid-row-template">
+	{{#gameBoard}}
+	<div class="game-grid-row">
+		{{#gridRow}}
+		<div class="game-grid-item
+			{{#correctItem}}correct-item{{/correctItem}}
+			{{^correctItem}}incorrect-item{{/correctItem}}">
+		</div>
+		 {{/gridRow}}
+	</div>
+	{{/gameBoard}}
+</script>
+
+<!-- JS dependencies -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+
+<!-- GAME LOGIC -->
+<script>
+(function($) {
+
+var CLASS = {
+	hideSolution: 'hide-solution',
+	gameOver: 'game-over'
+};
+var $gameContent = $('#game-content');
+var $gameBoard = $('#game-board');
+var $dialogBox = $('#dialog-box');
+var $dialogBoxTemplate = $('#dialog-box-template').html();
+var $gridRowTemplate = $('#game-grid-row-template').html();
+var $comboContainer = $('#combo-container');
+var correctCheers = ['Cool!', 'Nice!', 'Wonderful!', 'You got this!', 'Booyah!', 'Amazing!', 'Excellent!', 'You\'re a pro!'];
+var hideSolutionDuration = 1400;
+var comboTimerId = 0;
+var score = {
+	current: 0,
+	total: 0,
+	combo: 0,
+	comboMax: 0,
+	requirement: 1,
+	increase: function() {
+		this.current++;
+		this.total++;
+		this.combo++;
+		this.update();
+	},
+	resetToPrev: function() {
+		this.total -= this.current;
+		this.current = 0;
+		this.update();
+	},
+	resetAll: function() {
+		this.current = 0;
+		this.total = 0;
+		this.combo = 0;
+		this.requirement = 2;
+		this.update();
+	},
+	update: function() {
+		$('#game-score').text(this.total);
+	}
+};
+var game = {
+	defaults: {
+		rows: 2,
+		cols: 2,
+		level: 1,
+		timeLimit: 3000 + hideSolutionDuration
+	},
+	extraTimePerLevel: 200,
+	levelFailedTimerId: 0,
+	resetBoardTimerId: 0,
+	levelIsReady: false,
+	nextLevel: function() {
+		if (this.level%2 === 0) {
+			this.increaseBoardSize();
+		}
+		score.current = 0;
+
+		this.level++;
+		this.timeLimit += this.level * this.extraTimePerLevel;
+
+		var msg = correctCheers[_.random(0, correctCheers.length-1)];
+		showDialog({msg: msg});
+
+		revealSolution();
+		setTimeout(generateBoard, 850);
+	},
+	increaseBoardSize: function() {
+		this.rows++;
+		this.cols++;
+	},
+	resetBoard: function() {
+		score.resetToPrev();
+		generateBoard();
+		revealSolution();
+	},
+	resetTimer: function() {
+		clearTimeout(this.levelFailedTimerId);
+		this.levelFailedTimerId = setTimeout(levelFailed, this.timeLimit);
+		$('#game-timer')
+				.addClass('update')
+				.css({
+					'transition-duration': this.timeLimit - hideSolutionDuration + 'ms',
+					height: this.timeLimit/100
+				});
+		setTimeout(function() {
+			$('#game-timer').removeClass('update');
+		}, hideSolutionDuration);
+	},
+	create: function() {
+		score.resetAll();
+		$.extend(game, game.defaults);
+		$gameContent.removeClass(CLASS.gameOver);
+		generateBoard();
+		revealSolution();
+		$gameContent.addClass('game-started');
+	}
+};
+
+var generateBoard = function() {
+	var totalItemCount = game.rows * game.cols;
+	var _board = [];
+	for (var i=0; i<totalItemCount; i++) {
+		// generate initial set of answers
+		if (i<score.requirement)
+			_board.push({correctItem: true});
+		else
+			_board.push({});
+	}
+
+	var shuffledBoard = _.shuffle(_board);
+	var generatedBoard = [];
+	for (var i=0; i<game.rows; i++) {
+		// add a row of items for every x cols
+		generatedBoard.push( {gridRow: shuffledBoard.splice(0, game.cols)} );
+	}
+	//console.log(finalBoard);
+
+	var html = Mustache.render($gridRowTemplate, {gameBoard: generatedBoard});
+	$gameBoard.html(html);
+	setTimeout(function() {
+		$('.game-grid-item').addClass('created');
+	}, 25);
+	//$('#time-limit').html(game.timeLimit);
+	game.resetTimer();
+	showDialog({msg: 'Ready...'});
+}
+
+var solutionTimerId = 0;
+var revealSolution = function() {
+	var duration = hideSolutionDuration + (game.level * 50);
+	$gameBoard.removeClass(CLASS.hideSolution);
+	game.levelIsReady = false;
+	// hide solution after 'x' milliseconds
+	clearTimeout(solutionTimerId);
+	if (duration) {
+		solutionTimerId = setTimeout(function() {
+			$gameBoard.addClass(CLASS.hideSolution);
+			game.levelIsReady = true;
+			//showDialog({msg: 'Go!'});
+			solutionTimerId = 0;
+		}, duration)
+	}
+}
+
+var showDialog = function(templObj) {
+	$dialogBox.html(Mustache.render($dialogBoxTemplate, templObj));
+}
+
+var levelFailed = function() {
+
+	if (!game.levelIsReady)  {
+		return
+	}
+
+	showDialog({
+		msg: 'You made a booboo!',
+		failed: true
+	});
+	clearTimeout(game.resetBoardTimerId);
+	game.resetBoardTimerId = setTimeout(game.resetBoard, 1000);
+}
+
+var showCombo = function() {
+	$comboContainer
+		.addClass('update')
+		.one('transitionend', function() {
+			$(this).removeClass('update');
+		});
+	$('#current-combo-score').text(score.combo);
+}
+
+$('#game-content')
+.on('click', '.game-grid-item:not(.selected)', function() {
+
+	if (!game.levelIsReady)  {
+		showDialog({msg: 'Wait till tiles dissappear!'});
+		return
+	}
+
+	if ($(this).is('.correct-item')) {
+
+		clearTimeout(comboTimerId);
+		comboTimerId = setTimeout(function() {
+			if (score.combo > score.comboMax) {
+				score.comboMax = score.combo;
+				showCombo();
+			}
+			$('#game-score-max-combo').text(score.comboMax);
+			score.combo = 0;
+		}, 500);
+
+		score.increase();
+
+		if (score.current === score.requirement) {
+			score.requirement++;
+			game.nextLevel();
+		}
+
+	} else {
+
+		$(this).addClass('failed');
+		levelFailed();
+
+	}
+
+	$(this).addClass('selected');
+})
+.on('click', '#start-game', game.create);
+
+})(jQuery)
+</script>
+
+<footer></footer>
+
+</body>
+</html>
